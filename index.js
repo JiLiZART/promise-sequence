@@ -23,8 +23,7 @@ const transform = (curr, values, append, result) => {
  * @returns {Promise}
  * @throws Error
  */
-module.exports = (seq) => new Promise(
-    (resolve, reject) => {
+module.exports = (seq) => {
         const values = [], append = (result) => {
             if (isDefined(result)) values.push(result);
         };
@@ -33,13 +32,13 @@ module.exports = (seq) => new Promise(
             throw new Error('promise-sequence expects array as first argument');
         }
 
-        seq
+        return seq
             .reduce(
                 (prev, curr) => prev.then(
                     (result) => transform(curr, values, append, result).then(append, append)
                 ),
                 Promise.resolve()
             )
-            .then(() => resolve(values), () => reject(values))
+            .then(() => values, () => values)
     }
 );
